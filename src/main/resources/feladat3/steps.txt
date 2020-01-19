@@ -1,0 +1,18 @@
+created rootCA key with:
+openssl ecparam -name prime256v1 -genkey -noout -out rootCA.key
+created rootCA.cert with:
+openssl req -x509 -new -nodes -key rootCA.key -days 10 -out rootCA.crt
+
+created clientCA key with:
+openssl ecparam -name prime256v1 -genkey -noout -out clientCA.key
+created sign request with
+openssl -new req -key clientCA.key -out clientCA.csr
+signed clientCA.csr with rootCA:
+openssl x509 -req -in clientCA.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out clientCA.crt -days 40
+
+created serverCA key with:
+openssl genrsa -out serverCA.key 2048
+created serverCA sign request with:
+openssl req -new -key serverCA.key -out serverCA.csr
+signed serverCA with rootCA:
+openssl x509 -req -in serverCA.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out serverCA.crt -days 41 -sha256
